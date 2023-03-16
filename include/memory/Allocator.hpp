@@ -15,9 +15,11 @@ class Allocator {
 public:
     Allocator();
     ~Allocator() = default;
-    void *Allocate(int32_t size);
+    auto Allocate(int32_t memory_size) -> void*;
+    void Deallocate(void *p, int32_t memory_size);
+    void Reallocate(void *&p, int32_t old_size, int32_t new_size);
 private:
-    int GetIndex(int32_t memory_size) const;
+    auto GetIndex(int32_t memory_size) const -> int;
     void FillSLot(int32_t index);
     void NewMemPool();
 private:
