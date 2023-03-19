@@ -4,6 +4,8 @@
 #include <cstring>
 #include <cmath>
 
+#include <iostream>
+
 #include "file/FileWriter.hpp"
 
 namespace microkv {
@@ -14,6 +16,9 @@ FileWriter::FileWriter(const std::string &path, bool append) : cursor(0) {
     fd = open(path.c_str(), mode);
     if (fd < 0) {
         // TODO
+        std::cout << "open fail" << std::endl;
+    } else {
+        std::cout << "open success" << std::endl;
     }
 
 
