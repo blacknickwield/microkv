@@ -30,7 +30,8 @@ auto Allocator::Allocate(int32_t memory_size) -> void* {
     // Ensure that if slots[index] exists, it is always free.
     // So it can be allocated directly.
     slots[index] = ret->next;
-    return ret->address;
+    // return ret->address;
+    return ret;
 }
 
 
@@ -70,8 +71,12 @@ void Allocator::FillSLot(int32_t index) {
     int32_t allocated_size = block_size * BLOCK_CNT;
     if (free_size >= allocated_size) {
         for (size_t i = 0; i < BLOCK_CNT; ++i) {
-            auto *node = new BlockNode();
-            node->address = cursor + i * block_size;
+            // auto *node = new BlockNode();
+            // node->address = cursor + i * block_size;
+            auto *node = reinterpret_cast<BlockNode*>(cursor + i * block_size);
+            if (i == 0) {
+                node->next = nullptr;
+            }
             node->next = slots[index];
             slots[index] = node;
         }
@@ -82,8 +87,12 @@ void Allocator::FillSLot(int32_t index) {
         int32_t cnt = free_size / block_size;
         int32_t new_allocated_size = cnt * block_size;
         for (size_t i = 0; i < cnt; ++i) {
-            auto *node = new BlockNode();
-            node->address = cursor + i * block_size;
+            // auto *node = new BlockNode();
+            // node->address = cursor + i * block_size;
+             auto *node = reinterpret_cast<BlockNode*>(cursor + i * block_size);
+            if (i == 0) {
+                node->next = nullptr;
+            }
             node->next = slots[index];
             slots[index] = node;
         }
