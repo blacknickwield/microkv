@@ -6,8 +6,8 @@
 
 namespace microkv {
 
-union BlockNode {
-    void *address; // The start address of the block memory. Its value is null if it is free.
+struct BlockNode {
+    // void *address; // The start address of the block memory. Its value is null if it is free.
     BlockNode *next;
 };
 
