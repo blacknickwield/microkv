@@ -4,6 +4,28 @@
 
 namespace microkv::encoder {
 
+void Encode8Bit(char *dst, uint8_t val) {
+    *dst = val & 0xff;
+}
+
+void Encode16Bit(char *dst, uint16_t val) {
+    for (size_t i = 0; i < 2; ++i) {
+        dst[i] = (val >> (8 * i)) & 0xff;
+    }
+}
+
+void Encode32Bit(char *dst, uint32_t val) {
+    for (size_t i = 0; i < 4; ++i) {
+        dst[i] = (val >> (8 * i)) & 0xff;
+    }
+}
+
+void Encode64Bit(char *dst, uint64_t val) {
+    for (size_t i = 0; i < 8; ++i) {
+        dst[i] = ((val >> (8 * i))) & 0xff; 
+    }
+}
+
 void Put8Bit(std::string &dst, uint8_t val) {
     char *buf = static_cast<char*>(malloc(sizeof(val)));
     Encode8Bit(buf, val);
@@ -32,26 +54,6 @@ void Put64Bit(std::string &dst, uint64_t val) {
     free(buf);
 }
 
-void Encode8Bit(char *dst, uint8_t val) {
-    *dst = val & 0xff;
-}
 
-void Encode16Bit(char *dst, uint16_t val) {
-    for (size_t i = 0; i < 2; ++i) {
-        dst[i] = (val >> (8 * i)) & 0xff;
-    }
-}
-
-void Encode32Bit(char *dst, uint32_t val) {
-    for (size_t i = 0; i < 4; ++i) {
-        dst[i] = (val >> (8 * i)) & 0xff;
-    }
-}
-
-void Encode64Bit(char *dst, uint64_t val) {
-    for (size_t i = 0; i < 8; ++i) {
-        dst[i] = ((val >> (8 * i))) & 0xff; 
-    }
-}
 
 } // namespace microk
