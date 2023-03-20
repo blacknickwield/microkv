@@ -1,45 +1,72 @@
 #pragma once
 
 #include <mutex>
+#include <memory>
 #include <ctime>
 #include <iostream>
 #include <array>
+#include <cstring>
 
 #include "SkipListNode.hpp"
+#include "Allocator.hpp"
 
 namespace microkv {
-template<class K, class V>
+template<class K>
 class SkipList {
 public:
     void Show() const;
 public:
     SkipList();
+    explicit SkipList(std::shared_ptr<Allocator> allocator);
 public:
-    auto Insert(const K &key, const V &value) -> bool;
-    auto Erase(const K &key) const -> bool;
-    auto Find(const K &key, V &value) const -> bool;
+    class SkipListIterator {
+    public:
+        explicit SkipListIterator(const SkipList *skipList);
+        auto HasNext() const -> bool;
+        void Next();
+        void Reset();
+        auto Key() const -> const K&;
+        auto Value() const -> std::string&;  
+    private:
+        const SkipList<K> *skipList;
+        SkipListNode<K> *node;
+    };
+public:
+    auto Insert(const K &key, const std::string &value) -> bool;
+    auto Find(const K &key, std::string &value) const -> bool;
     auto Erase(const K &key) -> bool;
     auto Count(const K &key) const -> bool;
     const static size_t MAX_LEVEL = 32;
+
 private:
     auto RandomLevel() const -> size_t;
 private:
     size_t length;
     size_t level;
-    SkipListNode<K, V> *head, *tail;
+    SkipListNode<K> *head, *tail;
+    std::shared_ptr<Allocator> allocator;
     std::mutex mtx;
 };
 
-template<class K, class V>
-SkipList<K, V>::SkipList() : level(0), length(0) {
+template<class K>
+SkipList<K>::SkipList() : level(0), length(0) {
     srand((unsigned)time(nullptr));
-    K k; V v;
-    tail = new SkipListNode<K, V>(k, v, 0);
-    head = new SkipListNode<K, V>(k, v, MAX_LEVEL, tail);
+    allocator = std::make_shared<Allocator>();
+    K k;
+    tail = new SkipListNode<K>(k, 0);
+    head = new SkipListNode<K>(k, MAX_LEVEL, tail);
 }
 
-template<class K, class V>
-auto SkipList<K, V>::RandomLevel() const -> size_t {
+template<class K>
+SkipList<K>::SkipList(std::shared_ptr<Allocator> allocator) : allocator(allocator), level(0), length(0) {
+    srand((unsigned)time(nullptr));
+    K k;
+    tail = new SkipListNode<K>(k, 0);
+    head = new SkipListNode<K>(k, MAX_LEVEL, tail);
+}
+
+template<class K>
+auto SkipList<K>::RandomLevel() const -> size_t {
     size_t l = 1;
     while (rand() % 2) {
         ++l;
@@ -47,11 +74,10 @@ auto SkipList<K, V>::RandomLevel() const -> size_t {
     return l > MAX_LEVEL ? MAX_LEVEL : l;
 }
 
-template<class K, class V>
-auto SkipList<K, V>::Insert(const K &key, const V &value) -> bool {
+template<class K>
+auto SkipList<K>::Insert(const K &key, const std::string &value) -> bool {
     mtx.lock();
-    // SkipListNode<K, V> *update[MAX_LEVEL + 1];
-    std::array<SkipListNode<K, V>*, MAX_LEVEL + 1> update;
+    std::array<SkipListNode<K>*, MAX_LEVEL + 1> update;
     auto *current = head;
     for (ssize_t index = level; index >= 0; --index) {
         while (current->forward[index] != tail && current->forward[index]->key < key) {
@@ -74,7 +100,10 @@ auto SkipList<K, V>::Insert(const K &key, const V &value) -> bool {
         update[randomLevel] = head;
     }
     
-    auto *insertedNode = new SkipListNode<K, V>(key, value, randomLevel);
+    auto *insertedNode = new SkipListNode<K>(key, randomLevel, nullptr);
+    insertedNode->size = static_cast<uint32_t>(value.length());
+    insertedNode->value = static_cast<char*>(allocator->Allocate(insertedNode->size));
+    strncpy(insertedNode->value, value.c_str(), insertedNode->size);
     for (int index = randomLevel; index >= 0; --index) {
         insertedNode->forward[index] = update[index]->forward[index];
         update[index]->forward[index] = insertedNode;
@@ -85,8 +114,8 @@ auto SkipList<K, V>::Insert(const K &key, const V &value) -> bool {
     return true;
 }
 
-template<class K, class V>
-auto SkipList<K, V>::Find(const K &key, V &value) const -> bool {
+template<class K>
+auto SkipList<K>::Find(const K &key, std::string &value) const -> bool {
     auto *current = head;
     for (ssize_t index = level; index >= 0; --index) {
         while (current->forward[index] != tail && current->forward[index]->key < key) {
@@ -96,16 +125,16 @@ auto SkipList<K, V>::Find(const K &key, V &value) const -> bool {
 
     current = current->forward[0];
     if (current->key == key) {
-        value = current->value;
+        value.assign(current->value, current->size);
         return true;
     }
 
     return false;
 }
 
-template<class K, class V>
-auto SkipList<K, V>::Erase(const K &key) -> bool {
-    SkipListNode<K, V> *update[MAX_LEVEL + 1];    
+template<class K>
+auto SkipList<K>::Erase(const K &key) -> bool {
+    SkipListNode<K> *update[MAX_LEVEL + 1];    
     auto *current = head;
     for (ssize_t index = level; index >= 0; --index) {
         while (current->forward[index] != tail && current->forward[index]->key < key) {
@@ -126,6 +155,7 @@ auto SkipList<K, V>::Erase(const K &key) -> bool {
         update[index]->forward[index] = current->forward[index];
     }
 
+    allocator->Deallocate(current->value, current->size);
     delete current;
     while (level > 0 && head->forward[level] == tail) {
         --level;
@@ -134,15 +164,14 @@ auto SkipList<K, V>::Erase(const K &key) -> bool {
     return true;
 }
 
-template<class K, class V>
-auto SkipList<K, V>::Count(const K &key) const -> bool {
-    V value;
+template<class K>
+auto SkipList<K>::Count(const K &key) const -> bool {
+    std::string value;
     return Find(key, value);
 }
 
-// Only use for debug
-template<class K, class V>
-void SkipList<K, V>::Show() const {
+template<class K>
+void SkipList<K>::Show() const {
     using std::cout;
     using std::endl;
     cout << level << endl;
@@ -152,6 +181,37 @@ void SkipList<K, V>::Show() const {
         }
         cout << endl;
     }
+}
+
+
+template<class K>
+SkipList<K>::SkipListIterator::SkipListIterator(const SkipList *skipList) : skipList(skipList) {
+    node = skipList->head->forward[0];
+}
+
+template<class K>
+auto SkipList<K>::SkipListIterator::HasNext() const -> bool {
+    return node->forward[0] != skipList->tail;
+}
+
+template<class K>
+void SkipList<K>::SkipListIterator::Next() {
+    node = node->forward[0];
+}
+
+template<class K>
+void SkipList<K>::SkipListIterator::Reset() {
+    node = skipList->head->forward[0];
+}
+
+template<class K>
+auto SkipList<K>::SkipListIterator::Key() const -> const K& {
+    return node->key;
+}
+
+template<class K>
+auto SkipList<K>::SkipListIterator::Value() const -> std::string& {
+    return node->value;
 }
 
 }

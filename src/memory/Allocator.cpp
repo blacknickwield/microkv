@@ -36,6 +36,10 @@ auto Allocator::Allocate(int32_t memory_size) -> void* {
 
 
 void Allocator::Deallocate(void *p, int32_t memory_size) {
+    if (p == nullptr) {
+        return;
+    }
+    
     if (memory_size <= 0) {
         // TODO: laogger
     }
