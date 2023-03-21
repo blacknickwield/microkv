@@ -14,6 +14,11 @@ public:
 public:
     auto Add(const std::string &key, const std::string &value) -> Status;
     auto CreateDataBlock() -> Status;
+    auto IsFull() const -> bool;
+    auto Data() const -> const std::string&;
+    auto Size() const -> uint32_t;
+    auto Empty() const -> bool;
+    void Clear();
 private:
     std::string data;
     std::vector<uint32_t> group_start_pos; // Record where each group starts from in data.

@@ -12,4 +12,13 @@ auto IndexBlockBuilder::Add(const std::string &shortest_segment_key, uint32_t bl
     return {};
 }
 
+
+auto IndexBlockBuilder::Data() const -> std::string {
+    return data;
+}
+
+void IndexBlockBuilder::Clear() {
+    data.clear();
+}
+
 }

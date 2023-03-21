@@ -54,4 +54,14 @@ auto BloomFilter::Exist(const std::string &key) const -> bool {
     return true;
 }
 
+
+auto BloomFilter::Data() const -> const std::string& {
+    return bitSet;
+}
+
+
+auto BloomFilter::HashNums() const -> uint32_t {
+    return hashNums;
+}
+
 }

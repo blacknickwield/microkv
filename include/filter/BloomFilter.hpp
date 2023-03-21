@@ -12,6 +12,8 @@ public:
 public:
     void Insert(std::vector<std::string> &keys);
     auto Exist(const std::string &key) const -> bool;
+    auto Data() const -> const std::string&;
+    auto HashNums() const -> uint32_t;
 private:
     uint32_t hashNums; // The number of hash function
     // std::vector<uint8_t> bitSet;

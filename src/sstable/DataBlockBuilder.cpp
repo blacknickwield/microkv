@@ -66,4 +66,29 @@ auto DataBlockBuilder::CreateDataBlock() -> Status {
     
     return {};
 }
+
+auto DataBlockBuilder::IsFull() const -> bool {
+    return data.size() >= DEFAULT_DATABLOCK_SIZE;
+}
+
+auto DataBlockBuilder::Data() const -> const std::string& {
+    return data;
+}
+
+
+auto DataBlockBuilder::Size() const -> uint32_t {
+    return static_cast<uint32_t>(data.size());
+}
+
+auto DataBlockBuilder::Empty() const -> bool {
+    return Size() == 0;
+}
+
+void DataBlockBuilder::Clear() {
+    data.clear();
+    group_start_pos.clear();
+    record_num = 0;
+    last_key.clear();
+}
+
 } // namespace microk 
