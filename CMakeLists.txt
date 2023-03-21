@@ -14,5 +14,5 @@ file(GLOB_RECURSE SRC
         src/sstable/*.cpp
         src/util/*.cpp)
 
-add_executable(main main.cpp ${SRC})
+add_executable(main ${SRC})
 # include_directories(main PUBLIC include)
