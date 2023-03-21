@@ -6,7 +6,6 @@
 #include "FilterBlockBuilder.hpp"
 #include "FooterBuilder.hpp"
 #include "IndexBlockBuilder.hpp"
-#include "MetaBlockBuilder.hpp"
 #include "BlockInfo.hpp"
 #include "../file/FileWriter.hpp"
 #include "../util/Status.hpp"
