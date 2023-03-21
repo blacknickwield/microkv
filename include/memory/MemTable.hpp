@@ -4,7 +4,7 @@
 
 #include "SkipList.hpp"
 #include "Allocator.hpp"
-
+#include "../sstable/SSTableBuilder.hpp"
 namespace microkv {
 class MemTableIterator;
 
@@ -17,6 +17,8 @@ public:
     auto Get(const std::string &key, std::string &value) const -> bool;
     auto Update(const std::string &key, const std::string &value) -> bool;
     auto Delete(const std::string &key) -> bool;
+    auto NewIter() const -> MemTableIterator*;
+    void Persist(std::shared_ptr<SSTableBuilder> sstableBuilder);
 private:
     std::shared_ptr<SkipList<std::string>> table;
     std::shared_ptr<Allocator> allocator;

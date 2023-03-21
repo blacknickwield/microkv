@@ -1,4 +1,5 @@
 #include "memory/MemTable.hpp"
+#include "memory/MemTableIterator.hpp"
 
 namespace microkv {
 
@@ -28,6 +29,22 @@ auto MemTable::Delete(const std::string &key) -> bool {
         return table->Erase(key);
     }
     return false;
+}
+
+auto MemTable::NewIter() const -> MemTableIterator* {
+    return new MemTableIterator(table.get());
+}
+
+void MemTable::Persist(std::shared_ptr<SSTableBuilder> sstableBuilder) {
+    auto *it = NewIter();
+    it->Reset();
+
+    while (it->HasNext()) {
+        it->Next();
+        sstableBuilder->Add(it->Key(), it->Value());
+    }
+
+    sstableBuilder->CreateSSTable();
 }
 
 }
