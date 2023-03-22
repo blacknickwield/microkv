@@ -22,7 +22,7 @@ public:
 private:
     std::string data;
     std::vector<uint32_t> group_start_pos; // Record where each group starts from in data.
-    uint32_t record_num; // The number of records in this data block.
+    uint32_t record_num = 0; // The number of records in this data block.
     std::string last_key; // The last key. Used for calculate shared length.
     const static uint32_t RECORDS_PER_GROUP = 16; // Every 16 records form a group. 
     const static uint32_t DEFAULT_DATABLOCK_SIZE = 4 * 1024; // 4KB

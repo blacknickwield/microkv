@@ -8,7 +8,7 @@ FilterBlockBuilder::FilterBlockBuilder(uint32_t keysNum, double false_positive) 
 }
 
 void FilterBlockBuilder::Add(const std::string &key) {
-    keys.push_back(key);
+    keys.emplace_back(key);
 }
 
 auto FilterBlockBuilder::CreateFilterBlock() -> Status {

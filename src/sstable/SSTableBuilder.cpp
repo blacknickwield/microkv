@@ -6,7 +6,7 @@ SSTableBuilder::SSTableBuilder(uint32_t keysNum, double false_positive, std::sha
     dataBlockBuilder = std::make_shared<DataBlockBuilder>();
     indexBlockBuilder = std::make_shared<IndexBlockBuilder>();
     footerBuilder = std::make_shared<FooterBuilder>();
-
+    filterBlockBuilder = std::make_shared<FilterBlockBuilder>(keysNum, false_positive);
 }
 
 

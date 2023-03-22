@@ -54,6 +54,38 @@ void Put64Bit(std::string &dst, uint64_t val) {
     free(buf);
 }
 
+
+uint8_t Get8Bit(const char *data) {
+    return static_cast<uint32_t>(*data);
+}
+
+uint16_t Get16Bit(const char *data) {
+    uint16_t value = 0;
+    for (size_t i = 0; i < 2; ++i) {
+        value |= static_cast<uint16_t>(data[i]) << (i * 8);
+    }
+
+    return value;
+}
+
+uint32_t Get32Bit(const char *data) {
+    uint32_t value = 0;
+    for (size_t i = 0; i < 4; ++i) {
+        value |= static_cast<uint32_t>(data[i]) << (i * 8);
+    }
+
+    return value;
+}
+
+uint64_t Get64Bit(const char *data) {
+    uint64_t value = 0;
+    for (size_t i = 0; i < 8; ++i) {
+        value |= static_cast<uint64_t>(data[i]) << (i * 8);
+    }
+
+    return value;
+}
+
 uint32_t MurmurHash2(const void *key, uint32_t len) {
         // 'm' and 'r' are mixing constants generated offline.
         // They're not really 'magic', they just happen to work well.

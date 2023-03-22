@@ -11,6 +11,7 @@ namespace microkv {
 
 class FilterBlockBuilder {
 public:
+    FilterBlockBuilder() = delete;
     FilterBlockBuilder(uint32_t keysNum, double false_positive);
     void Add(const std::string &key);
     auto CreateFilterBlock() -> Status;

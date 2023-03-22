@@ -44,21 +44,21 @@ auto DataBlockBuilder::CreateDataBlock() -> Status {
     // 1 ~ n - 1 group is full.
     for (size_t i = 0; i < group_start_pos.size() - 1; ++i) {
         uint32_t group_record_num = RECORDS_PER_GROUP;
-        uint32_t group_size = group_start_pos[i + 1] - group_start_pos[i];
         uint32_t offset = group_start_pos[i];
+        uint32_t group_size = group_start_pos[i + 1] - group_start_pos[i];
         encoder::Put32Bit(data, group_record_num);
-        encoder::Put32Bit(data, group_size);
         encoder::Put32Bit(data, offset);
+        encoder::Put32Bit(data, group_size);
     }
 
 
     // n group(the last group) may not be full.
     uint32_t last_group_record_num = record_num % RECORDS_PER_GROUP;
-    uint32_t last_group_size = total_size - group_start_pos[group_start_pos.size() - 1];
     uint32_t last_offset = group_start_pos[group_start_pos.size() - 1];
+    uint32_t last_group_size = total_size - group_start_pos[group_start_pos.size() - 1];
     encoder::Put32Bit(data, last_group_record_num);
-    encoder::Put32Bit(data, last_group_size);
     encoder::Put32Bit(data, last_offset);
+    encoder::Put32Bit(data, last_group_size);
 
     // Restart point num.
     uint32_t restart_point_num = static_cast<uint32_t>((record_num - 0.5) / 16) + 1;
