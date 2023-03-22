@@ -7,7 +7,7 @@ namespace microkv {
 
 BloomFilter::BloomFilter(uint32_t keysNum, double falsePositive) {
     // The min length of bit set
-    uint32_t bitsNum = static_cast<uint32_t>(-keysNum * std::log(falsePositive) / (std::log(2) * std::log(2)));
+    uint32_t bitsNum = -1 * static_cast<uint32_t>(keysNum * std::log(falsePositive) / (std::log(2) * std::log(2)));
     uint32_t size = static_cast<uint32_t>((bitsNum + 7) / 8);
     bitSet.resize(size);
     bitsNum = size * 8;
@@ -16,8 +16,6 @@ BloomFilter::BloomFilter(uint32_t keysNum, double falsePositive) {
     hashNums = static_cast<uint32_t>(keyBitsNum * std::log(2));
     hashNums = std::max(static_cast<uint32_t>(1), hashNums);
     hashNums = std::min(static_cast<uint32_t>(32), hashNums);
-
-
 }
 
 void BloomFilter::Insert(std::vector<std::string> &keys) {
