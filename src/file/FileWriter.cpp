@@ -66,7 +66,7 @@ auto FileWriter::Append(const char *data, uint32_t len, bool flush) -> Status {
 
 auto FileWriter::FlushBuffer() -> Status {
     // TODO: write bug. need loop
-    write(fd, buffer, BUFFER_SIZE);
+    write(fd, buffer, cursor);
     cursor = 0;
 
     // TODO
