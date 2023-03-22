@@ -40,7 +40,12 @@ target_include_directories(AllocatorTest PUBLIC ../include)
 include(GoogleTest)
 gtest_add_tests(TARGET AllocatorTest)
 
-add_executable(MemTableTest memory/MemTableTest.cpp ../src/memory/MemTable.cpp ../src/memory/Allocator.cpp)
+file(GLOB_RECURSE SSTABLE ../src/sstable/*.cpp)
+
+add_executable(MemTableTest memory/MemTableTest.cpp ${SSTABLE} 
+  ../src/memory/MemTable.cpp ../src/memory/Allocator.cpp 
+  ../src/memory/MemTableIterator.cpp ../src/util/Encoder.cpp 
+  ../src/filter/BloomFilter.cpp ../src/file/FileWriter.cpp)
 target_link_libraries(MemTableTest GTest::gtest_main)
 target_include_directories(MemTableTest PUBLIC ../include)
 include(GoogleTest)
@@ -51,3 +56,12 @@ target_link_libraries(BloomFilterTest GTest::gtest_main)
 target_include_directories(BloomFilterTest PUBLIC ../include)
 include(GoogleTest)
 gtest_add_tests(TARGET BloomFilterTest)
+
+add_executable(SSTableBuilderTest sstable/SSTableBuilderTest.cpp ${SSTABLE} 
+  ../src/file/FileWriter.cpp ../src/util/Encoder.cpp
+  ../src/filter/BloomFilter.cpp
+  ../src/file/FileReader.cpp)
+target_link_libraries(SSTableBuilderTest GTest::gtest_main)
+target_include_directories(SSTableBuilderTest PUBLIC ../include)
+include(GoogleTest)
+gtest_add_tests(TARGET SSTableBuilderTest)
