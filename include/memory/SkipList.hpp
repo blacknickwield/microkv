@@ -26,7 +26,7 @@ public:
         void Next();
         void Reset();
         auto Key() const -> const K&;
-        auto Value() const -> std::string&;  
+        auto Value() const -> std::string;  
     private:
         const SkipList<K> *skipList;
         SkipListNode<K> *node;
@@ -210,8 +210,10 @@ auto SkipList<K>::SkipListIterator::Key() const -> const K& {
 }
 
 template<class K>
-auto SkipList<K>::SkipListIterator::Value() const -> std::string& {
-    return node->value;
+auto SkipList<K>::SkipListIterator::Value() const -> std::string {
+    std::string value;
+    value.assign(node->value, node->size);
+    return value;
 }
 
 }

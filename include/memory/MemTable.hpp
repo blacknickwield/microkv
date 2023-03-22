@@ -4,7 +4,10 @@
 
 #include "SkipList.hpp"
 #include "Allocator.hpp"
+#include "MemTableIterator.hpp"
+
 #include "../sstable/SSTableBuilder.hpp"
+
 namespace microkv {
 class MemTableIterator;
 
@@ -22,7 +25,6 @@ public:
 private:
     std::shared_ptr<SkipList<std::string>> table;
     std::shared_ptr<Allocator> allocator;
-    friend class MemTableIterator;
 };
 
 } // namespace microk 

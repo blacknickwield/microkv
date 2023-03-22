@@ -1,5 +1,5 @@
 #include "memory/MemTable.hpp"
-#include "memory/MemTableIterator.hpp"
+// #include "memory/MemTableIterator.hpp"
 
 namespace microkv {
 

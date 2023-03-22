@@ -23,7 +23,7 @@ auto MemTableIterator::Key() const -> const std::string& {
     return iter->Key();
 }
 
-auto MemTableIterator::Value() const -> const std::string& {
+auto MemTableIterator::Value() const -> std::string {
     return iter->Value();
 }
 
