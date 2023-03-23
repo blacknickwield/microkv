@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "sstable/SSTableBuilder.hpp"
+#include "sstable/SSTableReader.hpp"
 #include "file/FileReader.hpp"
 #include "util/Encoder.hpp"
 
@@ -80,4 +81,11 @@ TEST(SSTableBuilderTest, SimpleTest) {
     EXPECT_EQ(meta_block_size, 64);
     EXPECT_EQ(index_block_offset, 102);
     EXPECT_EQ(index_block_size, 16);
-}
+
+    // SSTableReader
+    auto sstableReader = std::make_shared<microkv::SSTableReader>(file_path);
+    sstableReader->Read();
+    std::string value_content;
+    EXPECT_EQ(sstableReader->Find(key, value_content), true);
+    EXPECT_EQ(value_content, value);
+}   

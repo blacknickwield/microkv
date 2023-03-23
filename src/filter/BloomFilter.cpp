@@ -18,6 +18,10 @@ BloomFilter::BloomFilter(uint32_t keysNum, double falsePositive) {
     hashNums = std::min(static_cast<uint32_t>(32), hashNums);
 }
 
+BloomFilter::BloomFilter(uint32_t hashNums, const std::string &bitSet) : hashNums(hashNums), bitSet(bitSet) {
+
+}
+
 void BloomFilter::Insert(std::vector<std::string> &keys) {
     uint32_t bitLength = bitSet.length() * 8;
     for (const auto &key : keys) {
