@@ -37,7 +37,8 @@ public:
     auto Erase(const K &key) -> bool;
     auto Count(const K &key) const -> bool;
     const static size_t MAX_LEVEL = 32;
-
+public:
+    auto GetMemory() const -> uint32_t;
 private:
     auto RandomLevel() const -> size_t;
 private:
@@ -46,6 +47,8 @@ private:
     SkipListNode<K> *head, *tail;
     std::shared_ptr<Allocator> allocator;
     std::mutex mtx;
+
+    uint32_t memory = 0;
 };
 
 template<class K>
@@ -109,6 +112,7 @@ auto SkipList<K>::Insert(const K &key, const std::string &value) -> bool {
         update[index]->forward[index] = insertedNode;
     }
 
+    memory += static_cast<uint32_t>(value.length());
     ++length;
     mtx.unlock();
     return true;
@@ -155,6 +159,7 @@ auto SkipList<K>::Erase(const K &key) -> bool {
         update[index]->forward[index] = current->forward[index];
     }
 
+    memory -= current->size;
     allocator->Deallocate(current->value, current->size);
     delete current;
     while (level > 0 && head->forward[level] == tail) {
@@ -168,6 +173,11 @@ template<class K>
 auto SkipList<K>::Count(const K &key) const -> bool {
     std::string value;
     return Find(key, value);
+}
+
+template<class K>
+auto SkipList<K>::GetMemory() const -> uint32_t {
+    return memory;
 }
 
 template<class K>

@@ -20,8 +20,11 @@ public:
     auto Get(const std::string &key, std::string &value) const -> bool;
     auto Update(const std::string &key, const std::string &value) -> bool;
     auto Delete(const std::string &key) -> bool;
+    auto Exist(const std::string &key) const -> bool;
     auto NewIter() const -> MemTableIterator*;
     void Persist(std::shared_ptr<SSTableBuilder> sstableBuilder);
+public:
+    auto GetMemory() const -> uint32_t;
 private:
     std::shared_ptr<SkipList<std::string>> table;
     std::shared_ptr<Allocator> allocator;

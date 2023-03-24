@@ -31,6 +31,10 @@ auto MemTable::Delete(const std::string &key) -> bool {
     return false;
 }
 
+auto MemTable::Exist(const std::string &key) const -> bool {
+    return table->Count(key);
+}
+
 auto MemTable::NewIter() const -> MemTableIterator* {
     return new MemTableIterator(table.get());
 }
@@ -45,6 +49,10 @@ void MemTable::Persist(std::shared_ptr<SSTableBuilder> sstableBuilder) {
     }
 
     sstableBuilder->CreateSSTable();
+}
+
+auto MemTable::GetMemory() const -> uint32_t {
+    return table->GetMemory();
 }
 
 }
