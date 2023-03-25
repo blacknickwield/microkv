@@ -11,11 +11,11 @@ public:
     DB() = default;
     DB(const DB&) = delete;
     DB& operator=(const DB&) = delete;
-    virtual ~DB();
+    virtual ~DB() {};
 public:
-    virtual auto Put(const WriteOptions &options, const std::string &key, const std::string &value) -> Status = 0;
-    virtual auto Get(const ReadOptions &options, const std::string &key, std::string &value) -> Status= 0;
-    virtual auto Delete(const WriteOptions &options, const std::string &key) -> Status = 0;
+    virtual auto Put(const Options &options, const std::string &key, std::string &value) -> Status = 0;
+    virtual auto Get(const Options &options, const std::string &key, std::string &value) -> Status= 0;
+    virtual auto Delete(const Options &options, const std::string &key) -> Status = 0;
 private:
 
 };

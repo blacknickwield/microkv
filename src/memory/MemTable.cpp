@@ -55,4 +55,8 @@ auto MemTable::GetMemory() const -> uint32_t {
     return table->GetMemory();
 }
 
+auto MemTable::GetSize() const -> uint32_t {
+    return table->GetSize();
+}
+
 }

@@ -39,6 +39,7 @@ public:
     const static size_t MAX_LEVEL = 32;
 public:
     auto GetMemory() const -> uint32_t;
+    auto GetSize() const -> uint32_t;
 private:
     auto RandomLevel() const -> size_t;
 private:
@@ -49,6 +50,7 @@ private:
     std::mutex mtx;
 
     uint32_t memory = 0;
+    uint32_t size = 0;
 };
 
 template<class K>
@@ -96,7 +98,7 @@ auto SkipList<K>::Insert(const K &key, const std::string &value) -> bool {
         return false;
     }
 
-
+    ++size;
     size_t randomLevel = RandomLevel();
     if (randomLevel > level) {
         randomLevel = ++level;
@@ -152,6 +154,8 @@ auto SkipList<K>::Erase(const K &key) -> bool {
         return false;
     }
 
+    --size;
+
     for (size_t index = 0; index <= level; ++index) {
         if (update[index]->forward[index] != current) {
             break;
@@ -178,6 +182,11 @@ auto SkipList<K>::Count(const K &key) const -> bool {
 template<class K>
 auto SkipList<K>::GetMemory() const -> uint32_t {
     return memory;
+}
+
+template<class K>
+auto SkipList<K>::GetSize() const -> uint32_t {
+    return size;
 }
 
 template<class K>

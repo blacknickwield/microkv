@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <memory>
-
+#include <functional>
 
 #include "CachePolicy.hpp"
 #include "LRU.hpp"
@@ -15,9 +15,9 @@ public:
     explicit Cache(const uint32_t capicity);
 
 public:
-    void Insert(const K &key, const V *value);
+    void Insert(const K &key, V *value);
     auto Delete(const K &key) -> bool;
-    auto Get(const K &key, V *value) -> bool;
+    auto Get(const K &key, V *&value) -> bool;
 
 private:
     std::vector<std::shared_ptr<CachePolicy<K, V>>> cache_pool;
@@ -34,21 +34,21 @@ Cache<K, V>::Cache(const uint32_t capicity) {
 }
 
 template<class K, class V>
-void Cache<K, V>::Insert(const K &key, const V *value) {
-    uint32_t index = std::hash<K>(key) % DEFAULT_CACHE_NUM;
+void Cache<K, V>::Insert(const K &key, V *value) {
+    uint32_t index = std::hash<K>()(key) % DEFAULT_CACHE_NUM;
     cache_pool[index]->Insert(key, value);
 }
 
 
 template<class K, class V>
 auto Cache<K, V>::Delete(const K &key) -> bool {
-    uint32_t idnex = std::hash<K>(key) % DEFAULT_CACHE_NUM;
+    uint32_t index = std::hash<K>()(key) % DEFAULT_CACHE_NUM;
     return cache_pool[index]->Delete(key);
 }
 
 template<class K, class V>
-auto Cache<K, V>::Get(const K &key, V *value) -> bool {
-    uint32_t idnex = std::hash<K>(key) % DEFAULT_CACHE_NUM;
+auto Cache<K, V>::Get(const K &key, V *&value) -> bool {
+    uint32_t index = std::hash<K>()(key) % DEFAULT_CACHE_NUM;
     return cache_pool[index]->Get(key, value);
 }
 

@@ -12,9 +12,9 @@ public:
     explicit DBImpl(const Options &options);
     ~DBImpl();
 public:
-    auto Put(const WriteOptions &options, const std::string &key, const std::string &value) -> Status override;
-    auto Get(const ReadOptions &options, const std::string &key, std::string &value) -> Status override;
-    auto Delete(const WriteOptions &options, const std::string &key) -> Status override;
+    auto Put(const Options &options, const std::string &key, std::string &value) -> Status override;
+    auto Get(const Options &options, const std::string &key, std::string &value) -> Status override;
+    auto Delete(const Options &options, const std::string &key) -> Status override;
 private:
     const Options options;
     std::shared_ptr<MemTable> memTable;

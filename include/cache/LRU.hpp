@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <list>
 
+#include <iostream>
+
 #include "CachePolicy.hpp"
 
 namespace microkv {
@@ -15,7 +17,7 @@ public:
 public:
     void Insert(const K &key, V* value) override;
     auto Delete(const K &key) -> bool override;
-    auto Get(const K &key, V *value) -> bool override;
+    auto Get(const K &key, V *&value) -> bool override;
 public:
     struct LRUNode {
         K key;
@@ -41,6 +43,7 @@ template<class K, class V>
 void LRU<K, V>::Insert(const K &key, V *value) {
     if (auto it = cache.find(key); it == cache.end()) {
         LRUNode *newNode = new LRUNode(key, value);
+
         nodes.push_front(newNode);
         cache[key] = nodes.begin();
 
@@ -54,6 +57,7 @@ void LRU<K, V>::Insert(const K &key, V *value) {
     } else {
         nodes.erase(cache[key]);
         nodes.push_front(new LRUNode(key, value));
+
         cache[key] = nodes.begin();
     }
 }
@@ -71,7 +75,7 @@ auto LRU<K, V>::Delete(const K &key) -> bool {
 }
 
 template<class K, class V>
-auto LRU<K, V>::Get(const K &key, V *value) -> bool {
+auto LRU<K, V>::Get(const K &key, V *&value) -> bool {
     if (auto it = cache.find(key); it != cache.end()) {
         value = (*cache[key])->value;
         nodes.erase(cache[key]);

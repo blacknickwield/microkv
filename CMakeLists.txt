@@ -9,10 +9,9 @@ file(GLOB_RECURSE SRC
         src/filter/*.cpp
         src/memory/*.cpp
         src/db/*.cpp
-        src/cache/*.cpp
         src/file/*.cpp
         src/sstable/*.cpp
         src/util/*.cpp)
 
-add_executable(main ${SRC})
+add_executable(main ${SRC} main.cpp)
 # include_directories(main PUBLIC include)

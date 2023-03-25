@@ -25,6 +25,7 @@ public:
     void Persist(std::shared_ptr<SSTableBuilder> sstableBuilder);
 public:
     auto GetMemory() const -> uint32_t;
+    auto GetSize() const -> uint32_t;
 private:
     std::shared_ptr<SkipList<std::string>> table;
     std::shared_ptr<Allocator> allocator;
