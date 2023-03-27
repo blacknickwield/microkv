@@ -3,6 +3,7 @@
 #include <list>
 #include <unordered_map>
 
+#include <iostream>
 #include "CachePolicy.hpp"
 
 namespace microkv {
@@ -42,6 +43,7 @@ LRUK<K, V>::LRUK(uint32_t capicity, uint32_t k) : capicity(capicity), k(k) {
 
 template<class K, class V>
 void LRUK<K, V>::Insert(const K &key, V *value) {
+    uint32_t xsize = static_cast<uint32_t>(cache.size() + history.size());
     if (cache.find(key) != cache.end()) {
         cache_nodes.erase(cache[key]);
         cache_nodes.push_front(new LRUNode(key, value));
@@ -52,7 +54,7 @@ void LRUK<K, V>::Insert(const K &key, V *value) {
     if (history.find(key) != history.end()) {
         (*history[key])->value = value;
         uint32_t cnt = ++(*history[key])->cnt;
-
+        
         // Move to cache
         if (cnt >= k) {
             LRUNode *newNode = new LRUNode(key, value);
@@ -66,7 +68,7 @@ void LRUK<K, V>::Insert(const K &key, V *value) {
     }
 
     uint32_t size = static_cast<uint32_t>(history.size() + cache.size());
-    if (size > capicity) {
+    if (size >= capicity) {
         if (!history.empty()) {
             auto *deleteNode = history_nodes.back();
             history.erase(deleteNode->key);
