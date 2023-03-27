@@ -22,6 +22,12 @@ target_include_directories(LRUTest PUBLIC ../include)
 include(GoogleTest)
 gtest_add_tests(TARGET LRUTest)
 
+add_executable(LRUKTest cache/LRUKTest.cpp)
+target_link_libraries(LRUKTest GTest::gtest_main)
+target_include_directories(LRUKTest PUBLIC ../include)
+include(GoogleTest)
+gtest_add_tests(TARGET LRUKTest)
+
 add_executable(FileWriterTest file/FileWriterTest.cpp ../src/file/FileWriter.cpp)
 target_link_libraries(FileWriterTest GTest::gtest_main)
 target_include_directories(FileWriterTest PUBLIC ../include)
