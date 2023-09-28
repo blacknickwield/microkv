@@ -60,3 +60,4 @@ build
 
 # doc
 doc
+.cache
